@@ -84,9 +84,7 @@ sub main {
 				}
 			}
 
-		}
-
-		if(rand() >= 0.3) {
+		} elsif(rand() >= 0.5) {
 			for(1 .. int(rand(30))) {
 				go_to_next_input_field();
 			}
