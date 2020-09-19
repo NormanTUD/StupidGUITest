@@ -144,6 +144,7 @@ sub move_mouse_randomly_in_area {
 	my $random_x = rand_range($upper_left->[0], $lower_right->[0]);
 	my $random_y = rand_range($upper_left->[1], $lower_right->[1]);
 	set_mouse($random_x, $random_y);
+	click(0);
 }
 
 sub doubleclick {
