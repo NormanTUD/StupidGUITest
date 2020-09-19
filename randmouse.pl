@@ -69,23 +69,17 @@ sub main {
 		}
 
 		if(rand() >= 0.5) {
-			my @possibilites = (1 .. 4);
-			my $rand = $possibilites[rand @possibilites];
+			for (0 .. int(rand(200))) {
+				my @possibilites = (1 .. 4);
+				my $rand = $possibilites[rand @possibilites];
 
-			if($rand == 1) {
-				for (0 .. int(rand(100))) {
+				if($rand == 1) {
 					scroll_right();
-				}
-			} elsif($rand == 2) {
-				for (0 .. int(rand(100))) {
+				} elsif($rand == 2) {
 					scroll_left();
-				}
-			} elsif($rand == 3) {
-				for (0 .. int(rand(100))) {
+				} elsif($rand == 3) {
 					scroll_down();
-				}
-			} elsif($rand == 4) {
-				for (0 .. int(rand(100))) {
+				} elsif($rand == 4) {
 					scroll_up();
 				}
 			}
@@ -93,7 +87,7 @@ sub main {
 		}
 
 		if(rand() >= 0.3) {
-			for(1 .. int(rand(100))) {
+			for(1 .. int(rand(30))) {
 				go_to_next_input_field();
 			}
 		}
