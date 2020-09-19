@@ -165,17 +165,15 @@ sub press_key {
 
 sub press_enter {
 	press_key('KP_Enter');
+	sleep 2;
 }
 
 sub press_some_random_keys {
-	my @keys = ('Tab', 'KP_Enter', 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9);
+	my @keys = ('Tab', 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, map { 'shift+'.$_ } ('a' .. 'z') );
 
 	for (0 .. rand_range(10, 100)) {
 		my $key = $keys[rand @keys];
 		press_key($key);
-		if($key eq 'KP_Enter') {
-			sleep 2;
-		}
 	}
 }
 
