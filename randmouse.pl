@@ -41,12 +41,22 @@ sub main {
 	<>;
 	my $lower_right = get_mouse();
 
-	sleep 5;
+	my $i = 5;
+	while ($i) {
+		print "Sleeping $i seconds\n";
+		sleep 1;
+		$i--;
+	}
 
 	set_mouse($upper_left->[0], $upper_left->[1]);
 	click();
 
 	while (1) {
+		if(screen_contains_error($error_regex)) {
+			mysystem("aplay msg.wav");
+			die("ERROR found!");
+		}
+
 		move_mouse_randomly_in_area($upper_left, $lower_right);
 		if(rand() >= 0.9) {
 			if(rand() >= 0.9) {
@@ -83,9 +93,6 @@ sub main {
 		press_some_random_keys();
 		press_enter();
 
-		if(screen_contains_error($error_regex)) {
-			die("ERROR found!");
-		}
 	}
 }
 
@@ -145,8 +152,9 @@ sub doubleclick {
 }
 
 sub click {
+	my $sleep = shift // 1;
 	mysystem("xdotool click 1");
-	sleep 2;
+	sleep $sleep;
 }
 
 sub press_key {
@@ -187,7 +195,7 @@ sub screen_contains_error {
 sub get_full_text {
 	mark_all_copy();
 	my $text = get_clipboard();
-	click();
+	click(0);
 	return $text;
 }
 
