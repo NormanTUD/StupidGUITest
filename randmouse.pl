@@ -60,10 +60,6 @@ sub main {
 		move_mouse_randomly_in_area($upper_left, $lower_right);
 		if(rand() >= 0.6) {
 			if(rand() >= 0.5) {
-				for (1 .. int(rand(100))) {
-					press_tab();
-				}
-			} else {
 				if(rand() >= 0.9) {
 					doubleclick();
 				} else {
@@ -72,7 +68,7 @@ sub main {
 			}
 		}
 
-		if(rand() >= 0.9) {
+		if(rand() >= 0.5) {
 			my @possibilites = (1 .. 4);
 			my $rand = $possibilites[rand @possibilites];
 
@@ -96,10 +92,20 @@ sub main {
 
 		}
 
+		if(rand() >= 0.3) {
+			for(1 .. int(rand(100))) {
+				go_to_next_input_field();
+			}
+		}
 		press_some_random_keys();
 		press_enter();
 
 	}
+}
+
+sub go_to_next_input_field {
+	print "Use this extension for this task: https://addons.mozilla.org/en-US/firefox/addon/fox-input/";
+	press_key('alt+j');
 }
 
 sub scroll_up {
@@ -180,7 +186,7 @@ sub press_enter {
 }
 
 sub press_some_random_keys {
-	my @keys = ('Tab', 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, map { 'shift+'.$_ } ('a' .. 'z') );
+	my @keys = ('a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, map { 'shift+'.$_ } ('a' .. 'z') );
 
 	for (0 .. rand_range(10, 100)) {
 		my $key = $keys[rand @keys];
