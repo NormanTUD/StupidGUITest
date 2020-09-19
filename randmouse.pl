@@ -53,7 +53,7 @@ sub main {
 
 	while (1) {
 		if(screen_contains_error($error_regex)) {
-			mysystem(q#pico2wave --lang de-DE --wave /tmp/Test.wav "Achtung, ich habe einen Fehler gefunden, glaube ich zumindest"; play /tmp/Test.wav; rm /tmp/Test.wav#);
+			mysystem(q#pico2wave --lang en-GB --wave /tmp/Test.wav "Warning, I believe I have found an error"; play /tmp/Test.wav; rm /tmp/Test.wav#);
 			die("ERROR found!");
 		}
 
