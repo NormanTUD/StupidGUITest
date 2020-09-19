@@ -160,7 +160,7 @@ sub press_enter {
 }
 
 sub press_some_random_keys {
-	my @keys = ('Tab', 'KP_Enter', 'a' .. 'z', 0 .. 9);
+	my @keys = ('Tab', 'KP_Enter', 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9);
 
 	for (0 .. rand_range(10, 100)) {
 		my $key = $keys[rand @keys];
