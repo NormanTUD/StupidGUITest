@@ -58,11 +58,17 @@ sub main {
 		}
 
 		move_mouse_randomly_in_area($upper_left, $lower_right);
-		if(rand() >= 0.9) {
-			if(rand() >= 0.9) {
-				doubleclick();
+		if(rand() >= 0.6) {
+			if(rand() >= 0.5) {
+				for (1 .. int(rand(100))) {
+					press_tab();
+				}
 			} else {
-				click();
+				if(rand() >= 0.9) {
+					doubleclick();
+				} else {
+					click();
+				}
 			}
 		}
 
@@ -162,6 +168,10 @@ sub press_key {
 	my $key = shift;
 	my $command = "xdotool key $key";
 	mysystem($command);
+}
+
+sub press_tab {
+	press_key('Tab');
 }
 
 sub press_enter {
