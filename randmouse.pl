@@ -90,13 +90,13 @@ sub main {
 			die("ERROR found!");
 		}
 
-		if($options{starturl} && get_full_text() =~ m#$options{x11disabledregex}#) {
+		if($options{starturl} && get_full_text() =~ m#(?:(?:was not found on this server)|(?:$options{x11disabledregex}))#) {
 			press_key('ctrl+l');
-			mysystem("xdotool type $options{starturl}");
+			mysystem("xdotool type --delay 200 $options{starturl}");
 			press_enter();
+			timeout 2;
 			set_mouse($upper_left->[0], $upper_left->[1]);
 			click();
-			timeout 2;
 		} else {
 			move_mouse_randomly_in_area($upper_left, $lower_right);
 			if(rand() >= 0.6) {
