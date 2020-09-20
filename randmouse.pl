@@ -89,6 +89,7 @@ sub main {
 				go_to_next_input_field();
 			}
 		}
+
 		press_some_random_keys();
 		press_enter();
 
@@ -166,10 +167,6 @@ sub press_key {
 	my $key = shift;
 	my $command = "xdotool key $key";
 	mysystem($command);
-}
-
-sub press_tab {
-	press_key('Tab');
 }
 
 sub press_enter {
