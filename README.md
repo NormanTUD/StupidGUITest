@@ -10,7 +10,7 @@ Firefox plugin:
 
 Linux-programs:
 
-> sudo apt-get install xdotool
+> sudo apt-get install xdotool xclip
 
 # Tips
 
