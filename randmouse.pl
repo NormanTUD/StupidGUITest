@@ -14,6 +14,7 @@ sub msg ($) {
 
 sub myqx {
 	my $command = shift;
+	exit 0 if(-e "/tmp/kill_x11_test");
 	print "$command\n";
 	my $res = qx($command);
 	if(wantarray()) {
@@ -26,6 +27,7 @@ sub myqx {
 
 sub mysystem {
 	my $command = shift;
+	exit 0 if(-e "/tmp/kill_x11_test");
 	print "$command\n";
 	system($command);
 	return $? << 8;
@@ -33,6 +35,9 @@ sub mysystem {
 
 sub main {
 	my $error_regex = shift // 'dier';
+
+	unlink "/tmp/kill_x11_test";
+
 	msg "Move your mouse to the upper left corner of the area that should be clicked in and press <enter>";
 	<>;
 	my $upper_left = get_mouse();
