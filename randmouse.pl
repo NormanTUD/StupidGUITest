@@ -92,6 +92,7 @@ sub main {
 
 		if($options{starturl} && get_full_text() =~ m#(?:(?:was not found on this server)|(?:$options{x11disabledregex}))#) {
 			press_key('ctrl+l');
+			timeout 2;
 			mysystem("xdotool type --delay 200 $options{starturl}");
 			press_enter();
 			timeout 2;
