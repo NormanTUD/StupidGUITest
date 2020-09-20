@@ -5,7 +5,42 @@ use warnings;
 use Data::Dumper;
 use Term::ANSIColor;
 
-main(@ARGV);
+sub timeout ($);
+
+my %options = (
+	starturl => '',
+	regex_error_page => 'dier',
+	x11disabledregex => 'Die Seite ist deaktiviert, weil der x11_debugging_mode aktiv ist'
+);
+
+analyze_args(@ARGV);
+
+main();
+
+sub _help {
+	my $exit_code = shift // 0;
+	print <<EOF;
+--help						This help
+--starturl="https://starturl.com/"		The pages that should be visited once there is a x11-test-disabled page
+--regex_error_page="errorpageregex"		A regex that recognizes whether the error page is reached or not
+--x11disabledregex="x11_debugging_mode aktiv"	A regex that checks whether a certain feature was disabled for x11-testing,
+						if found, go to starturl
+EOF
+	exit $exit_code;
+}
+
+sub analyze_args {
+	for (@_) {
+		if(/^--starturl=(.*)$/) {
+			$options{starturl} = $1;
+		} elsif (/^--regex_error_page=(.*)$/) {
+			$options{regex_error_page} = $1;
+		} else {
+			warn "Unknown parameter `$_`\n";
+			_help(1);
+		}
+	}
+}
 
 sub msg ($) {
 	my $var = shift;
@@ -34,69 +69,70 @@ sub mysystem {
 }
 
 sub main {
-	my $error_regex = shift // 'dier';
-
 	unlink "/tmp/kill_x11_test";
 
 	msg "Move your mouse to the upper left corner of the area that should be clicked in and press <enter>";
-	<>;
+	<STDIN>;
 	my $upper_left = get_mouse();
 
 	msg "Move your mouse to the lower right corner of the area that should be clicked in and press <enter>";
-	<>;
+	<STDIN>;
 	my $lower_right = get_mouse();
 
-	my $i = 5;
-	while ($i) {
-		print "Sleeping $i seconds\n";
-		sleep 1;
-		$i--;
-	}
+	timeout 5;
 
 	set_mouse($upper_left->[0], $upper_left->[1]);
 	click();
 
 	while (1) {
-		if(screen_contains_error($error_regex)) {
+		if(screen_contains_error($options{regex_error_page})) {
 			mysystem(q#pico2wave --lang en-GB --wave /tmp/Test.wav "Warning, I believe I have found an error"; play /tmp/Test.wav; rm /tmp/Test.wav#);
 			die("ERROR found!");
 		}
 
-		move_mouse_randomly_in_area($upper_left, $lower_right);
-		if(rand() >= 0.6) {
-			if(rand() >= 0.5) {
-				if(rand() >= 0.9) {
-					doubleclick();
-				} else {
-					click();
+		if($options{starturl} && get_full_text() =~ m#$options{x11disabledregex}#) {
+			press_key('ctrl+l');
+			mysystem("xdotool type $options{starturl}");
+			press_enter();
+			set_mouse($upper_left->[0], $upper_left->[1]);
+			click();
+			timeout 2;
+		} else {
+			move_mouse_randomly_in_area($upper_left, $lower_right);
+			if(rand() >= 0.6) {
+				if(rand() >= 0.5) {
+					if(rand() >= 0.9) {
+						doubleclick();
+					} else {
+						click();
+					}
 				}
 			}
-		}
 
-		if(rand() >= 0.8) {
-			for (0 .. int(rand(200))) {
-				my @possibilites = (1 .. 4);
-				my $rand = $possibilites[rand @possibilites];
+			if(rand() >= 0.8) {
+				for (0 .. int(rand(200))) {
+					my @possibilites = (1 .. 4);
+					my $rand = $possibilites[rand @possibilites];
 
-				if($rand == 1) {
-					scroll_right();
-				} elsif($rand == 2) {
-					scroll_left();
-				} elsif($rand == 3) {
-					scroll_down();
-				} elsif($rand == 4) {
-					scroll_up();
+					if($rand == 1) {
+						scroll_right();
+					} elsif($rand == 2) {
+						scroll_left();
+					} elsif($rand == 3) {
+						scroll_down();
+					} elsif($rand == 4) {
+						scroll_up();
+					}
+				}
+			} elsif(rand() >= 0.2) {
+				for(1 .. int(rand(30))) {
+					go_to_next_input_field();
 				}
 			}
-		} elsif(rand() >= 0.2) {
-			for(1 .. int(rand(30))) {
-				go_to_next_input_field();
-			}
+
+			press_some_random_keys();
+			press_enter();
 		}
-
-		press_some_random_keys();
-		press_enter();
-
 	}
 }
 
@@ -158,13 +194,13 @@ sub move_mouse_randomly_in_area {
 
 sub doubleclick {
 	mysystem("xdotool click 1 click 1");
-	sleep 2;
+	timeout 2;
 }
 
 sub click {
 	my $sleep = shift // 1;
 	mysystem("xdotool click 1");
-	sleep $sleep;
+	timeout $sleep;
 }
 
 sub press_key {
@@ -175,7 +211,7 @@ sub press_key {
 
 sub press_enter {
 	press_key('KP_Enter');
-	sleep 2;
+	timeout 2;
 }
 
 sub press_some_random_keys {
@@ -215,4 +251,14 @@ sub mark_all_copy {
 sub get_clipboard {
 	my $clipboard = myqx("xclip -o -selection clipboard");
 	return $clipboard;
+}
+
+sub timeout ($) {
+	my $wait = shift;
+
+	while ($wait) {
+		warn "Waiting $wait seconds...\n";
+		$wait--;
+		sleep 1;
+	}
 }
