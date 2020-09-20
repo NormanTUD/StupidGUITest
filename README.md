@@ -10,7 +10,7 @@ Firefox plugin:
 
 Linux-programs:
 
-> sudo apt-get install xdotool xclip
+> sudo apt-get install xdotool xclip pico2wave
 
 # Tips
 
