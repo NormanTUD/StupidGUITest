@@ -68,7 +68,7 @@ sub main {
 			}
 		}
 
-		if(rand() >= 0.5) {
+		if(rand() >= 0.8) {
 			for (0 .. int(rand(200))) {
 				my @possibilites = (1 .. 4);
 				my $rand = $possibilites[rand @possibilites];
@@ -83,8 +83,7 @@ sub main {
 					scroll_up();
 				}
 			}
-
-		} elsif(rand() >= 0.5) {
+		} elsif(rand() >= 0.2) {
 			for(1 .. int(rand(30))) {
 				go_to_next_input_field();
 			}
