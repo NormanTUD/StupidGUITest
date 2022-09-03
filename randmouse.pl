@@ -218,7 +218,7 @@ sub press_enter {
 sub press_some_random_keys {
 	my @keys = ('a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, map { 'shift+'.$_ } ('a' .. 'z') );
 
-	for (0 .. rand_range(10, 5000)) {
+	for (0 .. rand_range(10, 1000)) {
 		my $key = $keys[rand @keys];
 		press_key($key);
 	}
