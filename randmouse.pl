@@ -231,7 +231,7 @@ sub press_some_random_keys {
 			press_key($key);
 			if($i == 0) {
 				$end_screenshot_path = take_screenshot();
-				if(imgs_are_different($start_screenshot_path, $end_screenshot_path)) {
+				if(!imgs_are_different($start_screenshot_path, $end_screenshot_path)) {
 					$continue = 0;
 				}
 			}
@@ -303,15 +303,16 @@ sub take_screenshot {
 sub imgs_are_different {
 	my ($old, $new) = @_;
 
-	system("convert $old $old.rgba");
 	system("convert $new.png $new.rgba");
 	system("cmp $new.rgba $old.rgba");
 	my $ret = $?;
 
 	my $return = 0;
 	if($ret == 0) {
+		system("notify-send 'Imgs are the same'");
 		$return = 0;
 	} else {
+		system("notify-send 'Imgs are different'");
 		$return = 1;
 	}
 
