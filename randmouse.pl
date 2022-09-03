@@ -29,6 +29,8 @@ EOF
 	exit $exit_code;
 }
 
+my ($upper_left, $lower_right) = ();
+
 sub analyze_args {
 	for (@_) {
 		if(/^--starturl=(.*)$/) {
@@ -73,11 +75,13 @@ sub main {
 
 	msg "Move your mouse to the upper left corner of the area that should be clicked in and press <enter>";
 	<STDIN>;
-	my $upper_left = get_mouse();
+	$upper_left = get_mouse();
 
 	msg "Move your mouse to the lower right corner of the area that should be clicked in and press <enter>";
 	<STDIN>;
-	my $lower_right = get_mouse();
+	$lower_right = get_mouse();
+
+	die(take_screenshot());
 
 	timeout 2;
 
@@ -217,11 +221,27 @@ sub press_enter {
 
 sub press_some_random_keys {
 	my @keys = ('a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, 'a' .. 'z', 0 .. 9, map { 'shift+'.$_ } ('a' .. 'z') );
+	
+	my $start_screenshot_path = take_screenshot();
+	my $end_screenshot_path = "";
 
-	for (0 .. rand_range(10, 1000)) {
-		my $key = $keys[rand @keys];
-		press_key($key);
+	my $continue = 1;
+
+	for my $i (0 .. rand_range(10, 1000)) {
+		if($continue) {
+			my $key = $keys[rand @keys];
+			press_key($key);
+			if($i == 0) {
+				$end_screenshot_path = take_screenshot();
+				if(imgs_are_different($start_screenshot_path, $end_screenshot_path)) {
+					$continue = 0;
+				}
+			}
+		}
 	}
+
+	system("rm $start_screenshot_path");
+	system("rm $end_screenshot_path");
 }
 
 sub screen_contains_error {
@@ -262,4 +282,42 @@ sub timeout ($) {
 		$wait--;
 		sleep 1;
 	}
+}
+
+sub take_screenshot {
+	my $rand_path = "/tmp/screenshot_".rand_range(10, 10000000000000000).".png";
+	while (-e $rand_path) {
+		$rand_path = "/tmp/screenshot_".rand_range(10, 10000000000000000).".png";
+	}
+
+	my $width = abs($upper_left->[0] - $lower_right->[0]);
+	my $height = abs($upper_left->[1] - $lower_right->[1]);
+	my $x_start = $upper_left->[0];
+	my $y_start = $upper_left->[1];
+
+	my $command = "maim --geometry ${width}x${height}+${x_start}+${y_start} $rand_path";
+
+	system($command);
+
+	return $rand_path;
+}
+
+sub imgs_are_different {
+	my ($old, $new) = @_;
+
+	system("convert $old $old.rgba");
+	system("convert $new.png $new.rgba");
+	system("cmp $new.rgba $old.rgba");
+	my $ret = $?;
+
+	my $return = 0;
+	if($ret == 0) {
+		$return = 0;
+	} else {
+		$return = 1;
+	}
+
+	system("rm $new.rgba $old.rgba");
+
+	return $return;
 }
