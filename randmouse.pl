@@ -9,7 +9,7 @@ sub timeout ($);
 
 my %options = (
 	starturl => '',
-	regex_error_page => 'dier',
+	regex_error_page => 'rquery',
 	x11disabledregex => 'Die Seite ist deaktiviert, weil der x11_debugging_mode aktiv ist'
 );
 
@@ -79,7 +79,7 @@ sub main {
 	<STDIN>;
 	my $lower_right = get_mouse();
 
-	timeout 5;
+	timeout 2;
 
 	set_mouse($upper_left->[0], $upper_left->[1]);
 	click();
