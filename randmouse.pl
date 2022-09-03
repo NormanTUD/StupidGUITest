@@ -81,8 +81,6 @@ sub main {
 	<STDIN>;
 	$lower_right = get_mouse();
 
-	die(take_screenshot());
-
 	timeout 2;
 
 	set_mouse($upper_left->[0], $upper_left->[1]);
